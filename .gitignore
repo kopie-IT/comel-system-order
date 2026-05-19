@@ -1,0 +1,23 @@
+﻿# Dependencies
+vendor/
+
+# Uploads (persisted via Docker volumes)
+public/uploads/products/*
+public/uploads/qr/*
+!public/uploads/products/.gitkeep
+!public/uploads/qr/.gitkeep
+
+# Environment overrides
+src/config/local.php
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+
+# Docker
+*.log

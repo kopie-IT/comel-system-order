@@ -1,0 +1,43 @@
+﻿services:
+  app:
+    build: .
+    container_name: comel_app
+    ports:
+      - "8080:80"
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: comel_store
+      DB_USER: comel_user
+      DB_PASS: comel_pass123
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - uploads_products:/var/www/html/public/uploads/products
+      - uploads_qr:/var/www/html/public/uploads/qr
+    restart: unless-stopped
+
+  db:
+    image: mysql:8.0
+    container_name: comel_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass123
+      MYSQL_DATABASE: comel_store
+      MYSQL_USER: comel_user
+      MYSQL_PASSWORD: comel_pass123
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass123"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+volumes:
+  db_data:
+  uploads_products:
+  uploads_qr:
