@@ -1,8 +1,9 @@
 <?php
 $cartCount = 0;
 foreach ($_SESSION['cart'] ?? [] as $item) {
-    $cartCount += $item['quantity'];
+    $cartCount += (int)($item['quantity'] ?? 0);
 }
+$cartCount = (int)($cartCount ?? 0);
 $justAdded = $_SESSION['cart_just_added'] ?? null;
 unset($_SESSION['cart_just_added']);
 ?>
