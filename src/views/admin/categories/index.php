@@ -1,4 +1,4 @@
-﻿<?php $pageTitle = 'Kategori'; ?>
+<?php $pageTitle = 'Kategori'; ?>
 <div class="py-2">
     <div class="flex items-center justify-between mb-5">
         <h2 class="text-lg font-bold text-gray-700">Senarai Kategori</h2>
@@ -37,10 +37,13 @@
                            class="text-blue-500 hover:text-blue-700 text-xs font-semibold">
                             <i class="fa-solid fa-pen"></i> Edit
                         </a>
-                        <form method="POST" action="/admin/categories/delete/<?= $cat['id'] ?>" class="inline"
-                              onsubmit="return confirm('Padam kategori ini?')">
+                        <form method="POST" action="/admin/categories/delete/<?= $cat['id'] ?>" class="inline" id="del-cat-<?= $cat['id'] ?>">
                             <input type="hidden" name="csrf_token" value="<?= csrf_token() ?>">
-                            <button type="submit" class="text-red-400 hover:text-red-600 text-xs font-semibold">
+                            <button type="button"
+                                data-confirm-form="del-cat-<?= $cat['id'] ?>"
+                                data-confirm-title="Padam Kategori"
+                                data-confirm-message="Adakah anda pasti mahu memadam kategori ini?"
+                                class="text-red-400 hover:text-red-600 text-xs font-semibold">
                                 <i class="fa-solid fa-trash"></i> Padam
                             </button>
                         </form>

@@ -1,8 +1,14 @@
-﻿<?php
+<?php
 
 class HomeController {
     public function index(): void {
-        $categories = (new Category())->all();
+        $productModel = new Product();
+        $categories   = (new Category())->all();
+        foreach ($categories as &$cat) {
+            $cat['preview_images'] = $productModel->getPreviewImagesForCategory($cat['id']);
+        }
+        unset($cat);
         view('home/index', ['categories' => $categories], 'public');
     }
 }
+

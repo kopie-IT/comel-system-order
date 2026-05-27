@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 class ProductController {
     public function show(int $id): void {
@@ -8,13 +8,21 @@ class ProductController {
             view('errors/404', [], 'public');
             return;
         }
-        $sizes = [];
+        $sizes        = [];
+        $variants     = (new ProductVariant())->forProduct($id);
+        $productModel = new Product();
+        $imgRows      = $productModel->getImages($id);
+        $images       = !empty($imgRows)
+            ? array_column($imgRows, 'image')
+            : ($product['image'] ? [$product['image']] : []);
         if ($product['category_type'] === 'pakaian') {
             $sizes = (new ProductSize())->forProduct($id);
         }
         view('product/show', [
-            'product' => $product,
-            'sizes'   => $sizes,
+            'product'  => $product,
+            'sizes'    => $sizes,
+            'images'   => $images,
+            'variants' => $variants,
         ], 'public');
     }
 }

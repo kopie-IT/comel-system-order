@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 class AuthController {
     public function showLogin(): void {
@@ -25,6 +25,7 @@ class AuthController {
         session_regenerate_id(true);
         $_SESSION['admin_id']       = $admin['id'];
         $_SESSION['admin_username'] = $admin['username'];
+        $_SESSION['admin_role']     = $admin['role'] ?? 'admin';
 
         redirect('/admin/dashboard');
     }

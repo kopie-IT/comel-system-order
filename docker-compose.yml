@@ -14,6 +14,7 @@
       db:
         condition: service_healthy
     volumes:
+      - .:/var/www/html
       - uploads_products:/var/www/html/public/uploads/products
       - uploads_qr:/var/www/html/public/uploads/qr
     restart: unless-stopped

@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 class AdminCategoryController {
     public function index(): void {

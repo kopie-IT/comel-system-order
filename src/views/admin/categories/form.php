@@ -1,10 +1,10 @@
-﻿<?php
+<?php
 $isEdit    = !empty($category);
 $pageTitle = $isEdit ? 'Edit Kategori' : 'Tambah Kategori';
 $old       = $old ?? ($category ?? []);
 ?>
 <div class="py-2 max-w-lg">
-    <a href="/admin/categories" class="inline-flex items-center gap-2 text-pink-500 text-sm mb-4">
+    <a href="/admin/categories" class="inline-flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold px-4 py-2 rounded-xl text-sm mb-4 transition-colors">
         <i class="fa-solid fa-arrow-left"></i> Kembali
     </a>
     <h2 class="text-lg font-bold text-gray-700 mb-5"><?= $pageTitle ?></h2>
@@ -41,7 +41,7 @@ $old       = $old ?? ($category ?? []);
                 <?= $isEdit ? 'Kemaskini' : 'Simpan' ?>
             </button>
             <a href="/admin/categories"
-               class="border-2 border-gray-200 text-gray-600 font-semibold px-6 py-3 rounded-xl text-sm hover:bg-gray-50">
+               class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold px-6 py-3 rounded-xl text-sm transition-colors">
                 Batal
             </a>
         </div>

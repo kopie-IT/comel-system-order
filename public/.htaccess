@@ -1,5 +1,9 @@
-﻿Options -Indexes
+Options -Indexes
 RewriteEngine On
+
+# Strip /public prefix if accessed via root .htaccess redirect
+RewriteCond %{REQUEST_URI} ^/public/(.*)$
+RewriteRule ^ - [L]
 
 # Serve existing files and directories directly
 RewriteCond %{REQUEST_FILENAME} !-f

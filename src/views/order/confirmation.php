@@ -1,8 +1,19 @@
-﻿<?php
+<?php
 $pageTitle = 'Pengesahan Pesanan';
 $waNumber  = $settings['whatsapp_number'] ?? '';
 $qrImage   = $settings['qr_code_image'] ?? '';
 $payInstr  = $settings['payment_instructions'] ?? '';
+// Use the postage value stored on the order (state-based) when available
+$postage   = isset($order['postage']) && $order['postage'] !== null
+    ? (float)$order['postage']
+    : (float)($settings['postage_fee'] ?? '7.00');
+$state     = trim($order['state'] ?? '');
+
+// Calculate subtotal from items (total stored in DB includes postage)
+$subtotal = 0;
+foreach ($items as $item) {
+    $subtotal += (float)$item['subtotal'];
+}
 
 // Build WhatsApp message
 $itemLines = '';
@@ -12,23 +23,43 @@ foreach ($items as $item) {
     $itemLines .= ' x' . $item['quantity'] . ' = RM' . number_format($item['subtotal'], 2) . "\n";
 }
 $waMsg = "Pesanan Baru!\n"
-    . "No. Pesanan: " . $order['order_number'] . "\n"
+    . "Order ID: " . $order['order_number'] . "\n"
     . "Nama: " . $order['customer_name'] . "\n"
     . "Telefon: " . $order['customer_phone'] . "\n"
-    . "Alamat: " . $order['address'] . "\n\n"
-    . "Item:\n" . $itemLines . "\n"
+    . "Alamat: " . $order['address'] . "\n"
+    . ($state !== '' ? "Negeri: " . $state . "\n" : '')
+    . "\nItem:\n" . $itemLines . "\n"
+    . "Postaj: RM" . number_format($postage, 2) . "\n"
     . "Jumlah: RM" . number_format($order['total'], 2);
 $waUrl = 'https://wa.me/' . preg_replace('/\D/', '', $waNumber) . '?text=' . rawurlencode($waMsg);
 ?>
 <div class="py-2">
     <!-- Success header -->
-    <div class="text-center mb-6">
+    <div class="text-center mb-4">
         <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
             <i class="fa-solid fa-circle-check text-green-500 text-3xl"></i>
         </div>
         <h2 class="text-xl font-bold text-gray-800">Pesanan Berjaya!</h2>
-        <p class="text-gray-500 text-sm mt-1">No. Pesanan: <strong class="text-gray-700"><?= e($order['order_number']) ?></strong></p>
+        <p class="text-gray-500 text-sm mt-1">Order ID: <strong class="text-gray-700"><?= e($order['order_number']) ?></strong></p>
     </div>
+
+    <!-- WhatsApp sent notification -->
+    <?php if (!empty($wawpPhone)): ?>
+    <div class="bg-green-50 border-2 border-green-200 rounded-2xl p-4 mb-4">
+        <div class="flex items-start gap-3">
+            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center shrink-0">
+                <i class="fa-brands fa-whatsapp text-green-500 text-xl"></i>
+            </div>
+            <div>
+                <p class="text-sm font-bold text-green-800 mb-1">Mesej WhatsApp Telah Dihantar!</p>
+                <p class="text-xs text-green-700">
+                    Kami telah menghantar maklumat pesanan dan QR code pembayaran ke WhatsApp
+                    <strong><?= e($wawpPhone) ?></strong>. Sila semak WhatsApp anda.
+                </p>
+            </div>
+        </div>
+    </div>
+    <?php endif; ?>
 
     <!-- Order items -->
     <div class="card p-4 mb-4">
@@ -45,9 +76,19 @@ $waUrl = 'https://wa.me/' . preg_replace('/\D/', '', $waNumber) . '?text=' . raw
             </div>
             <?php endforeach; ?>
         </div>
-        <div class="border-t pt-3 flex justify-between">
-            <span class="font-bold text-gray-700">Jumlah</span>
-            <span class="font-bold text-pink-500 text-lg">RM<?= number_format($order['total'], 2) ?></span>
+        <div class="border-t pt-3 space-y-2">
+            <div class="flex justify-between text-sm">
+                <span class="text-gray-500">Subtotal</span>
+                <span class="font-semibold text-gray-700">RM<?= number_format($subtotal, 2) ?></span>
+            </div>
+            <div class="flex justify-between text-sm">
+                <span class="text-gray-500"><i class="fa-solid fa-truck text-gray-400 mr-1"></i> Postaj<?php if ($state !== ''): ?> <span class="text-xs text-gray-400">(<?= e($state) ?>)</span><?php endif; ?></span>
+                <span class="font-semibold text-gray-700">RM<?= number_format($postage, 2) ?></span>
+            </div>
+            <div class="flex justify-between pt-2 border-t">
+                <span class="font-bold text-gray-700">Jumlah</span>
+                <span class="font-bold text-pink-500 text-lg">RM<?= number_format($order['total'], 2) ?></span>
+            </div>
         </div>
     </div>
 
@@ -65,15 +106,15 @@ $waUrl = 'https://wa.me/' . preg_replace('/\D/', '', $waNumber) . '?text=' . raw
     </div>
     <?php endif; ?>
 
-    <!-- WhatsApp notify -->
-    <?php if ($waNumber): ?>
-    <a href="<?= $waUrl ?>" target="_blank"
-       class="block w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3.5 rounded-xl text-center mb-3 transition-colors">
+    <!-- WhatsApp notify (wa_link mode) -->
+    <?php if (!empty($waNotifyUrl)): ?>
+    <a href="<?= e($waNotifyUrl) ?>" target="_blank" rel="noopener noreferrer"
+       class="block w-full bg-green-500 hover:bg-green-600 active:bg-green-700 text-white font-bold py-3.5 rounded-xl text-center mb-3 transition-colors">
         <i class="fa-brands fa-whatsapp mr-2 text-lg"></i> Hantar Notifikasi ke Admin
     </a>
     <?php endif; ?>
 
-    <a href="/" class="block w-full border-2 border-pink-300 text-pink-500 font-bold py-3.5 rounded-xl text-center hover:bg-pink-50 transition-colors">
+    <a href="/" class="block w-full bg-pink-500 hover:bg-pink-600 active:bg-pink-700 text-white font-bold py-3.5 rounded-xl text-center transition-colors">
         <i class="fa-solid fa-house mr-2"></i> Kembali ke Laman Utama
     </a>
 </div>

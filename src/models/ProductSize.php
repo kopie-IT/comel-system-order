@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 class ProductSize {
     private PDO $db;
@@ -45,6 +45,13 @@ class ProductSize {
     public function decrementStock(int $id, int $qty): void {
         $stmt = $this->db->prepare(
             'UPDATE product_sizes SET stock = GREATEST(stock - ?, 0) WHERE id = ?'
+        );
+        $stmt->execute([$qty, $id]);
+    }
+
+    public function incrementStock(int $id, int $qty): void {
+        $stmt = $this->db->prepare(
+            'UPDATE product_sizes SET stock = stock + ? WHERE id = ?'
         );
         $stmt->execute([$qty, $id]);
     }

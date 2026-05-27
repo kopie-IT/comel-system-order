@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 class Customer {
     private PDO $db;
@@ -35,5 +35,27 @@ class Customer {
         );
         $stmt->execute([$name, $phone]);
         return (int)$this->db->lastInsertId();
+    }
+    public function updateName(int $id, string $name): void {
+        $stmt = $this->db->prepare('UPDATE customers SET name = ? WHERE id = ?');
+        $stmt->execute([$name, $id]);
+    }
+
+    public function all(string $search = ''): array {
+        $sql    = 'SELECT c.*, COUNT(DISTINCT o.id) AS order_count,
+                   COUNT(DISTINCT ca.id) AS address_count,
+                   MAX(o.created_at) AS last_order_at
+                   FROM customers c
+                   LEFT JOIN orders o ON o.customer_id = c.id
+                   LEFT JOIN customer_addresses ca ON ca.customer_id = c.id';
+        $params = [];
+        if ($search !== '') {
+            $sql    .= ' WHERE c.name LIKE ? OR c.phone LIKE ?';
+            $params  = ['%' . $search . '%', '%' . $search . '%'];
+        }
+        $sql .= ' GROUP BY c.id ORDER BY c.created_at DESC';
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
     }
 }
