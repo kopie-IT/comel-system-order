@@ -1,3 +1,11 @@
+<?php
+$cartCount = 0;
+foreach ($_SESSION['cart'] ?? [] as $item) {
+    $cartCount += $item['quantity'];
+}
+$justAdded = $_SESSION['cart_just_added'] ?? null;
+unset($_SESSION['cart_just_added']);
+?>
 <!DOCTYPE html>
 <html lang="ms" translate="no">
 <head>
