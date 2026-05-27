@@ -225,10 +225,18 @@ $statusColor = [
                        class="w-full border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-orange-400">
             </div>
         <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1">Slip Kurier (Gambar/PDF, maks 5MB)</label>
+            <label class="block text-xs font-semibold text-gray-600 mb-1">Slip Kurier (Gambar/PDF, maks 15MB)</label>
             <?php if ($order['courier_slip']): ?>
             <?php $slipExt = strtolower(pathinfo($order['courier_slip'], PATHINFO_EXTENSION));
-                  $isImg   = in_array($slipExt, ['jpg','jpeg','png','webp']); ?>
+                  $isImg   = in_array($slipExt, ['jpg','jpeg','png','webp']);
+                  $slipFullPath = ROOT_PATH . '/public' . $order['courier_slip'];
+                  $slipSize     = file_exists($slipFullPath) ? filesize($slipFullPath) : 0;
+                  $slipSizeStr  = $slipSize > 0
+                      ? ($slipSize >= 1048576
+                          ? number_format($slipSize / 1048576, 2) . ' MB'
+                          : number_format($slipSize / 1024, 1) . ' KB')
+                      : '—';
+            ?>
             <div class="mb-3 p-3 bg-gray-50 rounded-xl border border-gray-200">
                 <p class="text-xs font-semibold text-gray-500 mb-2"><i class="fa-solid fa-receipt mr-1 text-orange-400"></i>Slip semasa:</p>
                 <?php if ($isImg): ?>
@@ -243,12 +251,18 @@ $statusColor = [
                     <i class="fa-solid fa-file-pdf text-lg"></i> Lihat Slip PDF
                 </a>
                 <?php endif; ?>
-                <p class="text-xs text-gray-400 mt-2">Muat naik baru untuk ganti slip semasa.</p>
+                <p class="text-xs text-gray-400 mt-2">
+                    <i class="fa-solid fa-weight-hanging mr-1"></i>Saiz fail: <span class="font-semibold text-gray-500"><?= $slipSizeStr ?></span>
+                    &nbsp;&middot;&nbsp; Muat naik baru untuk ganti slip semasa.
+                </p>
             </div>
             <?php endif; ?>
-            <input type="file" name="courier_slip" accept="image/jpeg,image/png,image/webp,application/pdf"
+            <input type="file" name="courier_slip" id="courier_slip_input" accept="image/jpeg,image/png,image/webp,application/pdf"
                 class="block text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0
                        file:text-sm file:font-semibold file:bg-orange-500 file:text-white hover:file:bg-orange-600 file:cursor-pointer file:transition-colors">
+            <p id="slip-size-preview" class="text-xs text-gray-400 mt-1 hidden">
+                <i class="fa-solid fa-weight-hanging mr-1"></i>Saiz fail dipilih: <span id="slip-size-value" class="font-semibold text-gray-600"></span>
+            </p>
         </div>
             <button type="submit"
                 class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2.5 rounded-xl text-sm transition-colors">
@@ -309,7 +323,32 @@ function copyCustomerInfo() {
     if (!form) return;
     var tracking = form.querySelector('input[name="tracking_number"]');
     var slip     = form.querySelector('input[name="courier_slip"]');
+    var preview  = document.getElementById('slip-size-preview');
+    var sizeVal  = document.getElementById('slip-size-value');
     if (!tracking || !slip) return;
+
+    // Show file size when a file is selected
+    slip.addEventListener('change', function () {
+        if (slip.files && slip.files.length > 0) {
+            var bytes = slip.files[0].size;
+            var str   = bytes >= 1048576
+                ? (bytes / 1048576).toFixed(2) + ' MB'
+                : (bytes / 1024).toFixed(1) + ' KB';
+            sizeVal.textContent = str;
+            preview.classList.remove('hidden');
+
+            // Warn if over 15MB
+            if (bytes > 15 * 1024 * 1024) {
+                sizeVal.classList.add('text-red-500');
+                sizeVal.textContent += ' — MELEBIHI 15MB!';
+            } else {
+                sizeVal.classList.remove('text-red-500');
+            }
+        } else {
+            preview.classList.add('hidden');
+        }
+    });
+
     form.addEventListener('submit', function () {
         if (tracking.value.trim() === '' && slip.files && slip.files.length > 0) {
             tracking.value = 'Slip penghantaran telah diupload';
