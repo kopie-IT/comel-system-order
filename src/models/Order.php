@@ -181,10 +181,20 @@ class Order {
     }
 
     public function delete(int $id): bool {
-        // order_items will cascade-delete via FK
-        $stmt = $this->db->prepare('DELETE FROM orders WHERE id = ?');
-        $stmt->execute([$id]);
-        return $stmt->rowCount() > 0;
+        // Explicitly delete order_items first to avoid FK issues on
+        // servers where CASCADE may not be set up (e.g. old schema import).
+        $this->db->beginTransaction();
+        try {
+            $this->db->prepare('DELETE FROM `order_items` WHERE `order_id` = ?')->execute([$id]);
+            $stmt = $this->db->prepare('DELETE FROM `orders` WHERE `id` = ?');
+            $stmt->execute([$id]);
+            $affected = $stmt->rowCount();
+            $this->db->commit();
+            return $affected > 0;
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
     }
 
     public function stats(): array {

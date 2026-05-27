@@ -149,8 +149,12 @@ class AdminOrderController {
             }
         }
 
-        $orderModel->delete($id);
-        flash('success', 'Pesanan #' . $order['order_number'] . ' berjaya dipadam.');
+        try {
+            $orderModel->delete($id);
+            flash('success', 'Pesanan #' . $order['order_number'] . ' berjaya dipadam.');
+        } catch (\Throwable $e) {
+            flash('error', 'Gagal memadam pesanan: ' . $e->getMessage());
+        }
         redirect('/admin/orders');
     }
 
