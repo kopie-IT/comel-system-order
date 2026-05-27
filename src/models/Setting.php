@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 class Setting {
     private PDO $db;
@@ -27,11 +27,14 @@ class Setting {
     }
 
     public function set(string $key, string $value): void {
+        // Use INSERT ... ON DUPLICATE KEY UPDATE with alias row syntax,
+        // compatible with MySQL 5.7, 8.0+ and MariaDB 10.3+.
+        // Avoids the deprecated VALUES() function in MySQL 8.0.20+.
         $stmt = $this->db->prepare(
-            'INSERT INTO settings (`key`, value)
+            'INSERT INTO settings (`key`, `value`)
              VALUES (?, ?)
-             ON DUPLICATE KEY UPDATE value = VALUES(value)'
+             ON DUPLICATE KEY UPDATE `value` = ?'
         );
-        $stmt->execute([$key, $value]);
+        $stmt->execute([$key, $value, $value]);
     }
 }
