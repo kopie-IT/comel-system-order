@@ -50,12 +50,9 @@
                         $statusLabel = ['pending'=>'Pending','confirmed'=>'Confirmed','completed'=>'Completed','cancelled'=>'Cancelled'];
                         $cls = $statusColor[$order['status']] ?? 'bg-gray-100 text-gray-600';
                     ?>
-                    <tr class="hover:bg-gray-50">
+                    <tr class="hover:bg-gray-50 cursor-pointer" onclick="window.location='/admin/orders/<?= $order['id'] ?>'">
                         <td class="px-5 py-3 font-medium text-pink-500"><?= e($order['order_number']) ?></td>
-                        <td class="px-5 py-3 text-gray-700">
-                            <a href="/order/track?phone=<?= urlencode($order['customer_phone']) ?>" target="_blank"
-                               class="hover:text-pink-500 hover:underline"><?= e($order['customer_name']) ?></a>
-                        </td>
+                        <td class="px-5 py-3 text-gray-700"><?= e($order['customer_name']) ?></td>
                         <td class="px-5 py-3 text-gray-500"><?= e($order['customer_phone']) ?></td>
                         <td class="px-5 py-3 font-semibold">RM<?= number_format($order['total'], 2) ?></td>
                         <td class="px-5 py-3">
@@ -64,7 +61,7 @@
                             </span>
                         </td>
                         <td class="px-5 py-3 text-gray-400"><?= date('d/m/Y', strtotime($order['created_at'])) ?></td>
-                        <td class="px-5 py-3 text-right">
+                        <td class="px-5 py-3 text-right" onclick="event.stopPropagation()">
                             <div class="flex items-center justify-end gap-3">
                                 <a href="/admin/orders/<?= $order['id'] ?>"
                                    class="text-blue-500 hover:text-blue-700 text-xs font-semibold">
