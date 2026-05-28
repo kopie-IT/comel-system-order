@@ -9,9 +9,13 @@ class Product {
 
     public function all(int $categoryId = 0, string $search = '', bool $inStockOnly = false): array {
         $sql    = 'SELECT p.*, c.name AS category_name, c.type AS category_type,
-                       CASE WHEN c.type = \'pakaian\' THEN
-                           COALESCE((SELECT MIN(ps.price) FROM product_sizes ps WHERE ps.product_id = p.id AND ps.stock > 0), p.price)
-                       ELSE p.price END AS display_price
+                       CASE
+                           WHEN c.type = \'pakaian\' AND EXISTS (SELECT 1 FROM product_sizes ps WHERE ps.product_id = p.id) THEN
+                               COALESCE((SELECT MIN(ps.price) FROM product_sizes ps WHERE ps.product_id = p.id AND ps.stock > 0), p.price)
+                           WHEN EXISTS (SELECT 1 FROM product_variants pv WHERE pv.product_id = p.id) THEN
+                               COALESCE((SELECT MIN(pv.price) FROM product_variants pv WHERE pv.product_id = p.id AND pv.stock > 0 AND pv.price > 0), p.price)
+                           ELSE p.price
+                       END AS display_price
                    FROM products p
                    JOIN categories c ON c.id = p.category_id
                    WHERE p.deleted_at IS NULL';
@@ -27,10 +31,22 @@ class Product {
         }
         if ($inStockOnly) {
             $sql .= ' AND (
-                (c.type = "produk" AND p.stock > 0)
-                OR (c.type = "pakaian" AND EXISTS (
-                    SELECT 1 FROM product_sizes ps
-                    WHERE ps.product_id = p.id AND ps.stock > 0
+                (c.type = "produk" AND (
+                    p.stock > 0
+                    OR EXISTS (
+                        SELECT 1 FROM product_variants pv
+                        WHERE pv.product_id = p.id AND pv.stock > 0
+                    )
+                ))
+                OR (c.type = "pakaian" AND (
+                    EXISTS (
+                        SELECT 1 FROM product_sizes ps
+                        WHERE ps.product_id = p.id AND ps.stock > 0
+                    )
+                    OR EXISTS (
+                        SELECT 1 FROM product_variants pv
+                        WHERE pv.product_id = p.id AND pv.stock > 0
+                    )
                 ))
             )';
         }

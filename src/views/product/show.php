@@ -70,17 +70,26 @@ $waShareUrl = $waLink . '?text=' . rawurlencode($waMsg);
         <!-- Price + Quantity inline -->
         <?php
         $displayPrice = (float)$product['price'];
-        if ($product['category_type'] === 'pakaian' && !empty($sizes)) {
+        $hasVariants  = !empty($variants);
+        $hasSizes     = !empty($sizes);
+        if ($product['category_type'] === 'pakaian' && $hasSizes) {
             $inStockPrices = [];
             foreach ($sizes as $s) {
                 if ((int)$s['stock'] > 0) $inStockPrices[] = (float)$s['price'];
             }
             if (!empty($inStockPrices)) $displayPrice = min($inStockPrices);
+        } elseif ($hasVariants) {
+            $inStockPrices = [];
+            foreach ($variants as $v) {
+                if ((int)$v['stock'] > 0 && (float)$v['price'] > 0) $inStockPrices[] = (float)$v['price'];
+            }
+            if (!empty($inStockPrices)) $displayPrice = min($inStockPrices);
         }
+        $showDari = ($product['category_type'] === 'pakaian' && $hasSizes) || ($hasVariants && (float)$product['price'] == 0);
         ?>
         <div class="flex items-center justify-between mb-3">
             <div id="price-display" class="text-2xl font-bold text-pink-500">
-                <?= $product['category_type'] === 'pakaian' ? '<span class="text-base font-normal text-gray-400 mr-1">Dari</span>' : '' ?>RM<?= number_format($displayPrice, 2) ?>
+                <?= $showDari ? '<span class="text-base font-normal text-gray-400 mr-1">Dari</span>' : '' ?>RM<?= number_format($displayPrice, 2) ?>
             </div>
             <div class="flex items-center gap-2">
                 <button type="button" id="qty-minus"
@@ -130,6 +139,9 @@ $waShareUrl = $waLink . '?text=' . rawurlencode($waMsg);
         <?php endif; ?>
 
         <?php if (!empty($variants)): ?>
+        <?php if ($product['category_type'] === 'pakaian' && !empty($sizes)): ?>
+        <hr class="border-gray-100">
+        <?php endif; ?>
         <!-- Variant selector -->
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-2">Pilih Varian</label>
@@ -141,7 +153,7 @@ $waShareUrl = $waLink . '?text=' . rawurlencode($waMsg);
                            data-stock="<?= $variant['stock'] ?>"
                            data-image="<?= e($variant['image'] ?? '') ?>"
                            class="sr-only variant-radio"
-                           <?= $product['category_type'] !== 'pakaian' ? 'required' : '' ?>>
+                           required>
                     <div class="variant-btn border-2 border-gray-200 rounded-xl p-2 text-center transition-all
                         <?= (int)$variant['stock'] < 1 ? 'opacity-40 cursor-not-allowed' : 'hover:border-pink-400' ?>"
                         <?= (int)$variant['stock'] < 1 ? 'data-disabled="1"' : '' ?>>
@@ -225,7 +237,15 @@ $waShareUrl = $waLink . '?text=' . rawurlencode($waMsg);
     var qtyInput    = document.getElementById('quantity');
     var qtyHidden   = document.getElementById('quantity-hidden');
     var priceDisp   = document.getElementById('price-display');
-    var maxStock    = <?= $product['category_type'] !== 'pakaian' ? (int)$product['stock'] : 999 ?>;
+    var maxStock    = <?php
+        if ($product['category_type'] !== 'pakaian') {
+            echo (int)$product['stock'];
+        } elseif (!empty($sizes)) {
+            echo 999; // updated on size selection
+        } else {
+            echo 0; // updated on variant selection
+        }
+    ?>;
 
     function syncQty() {
         if (qtyHidden) qtyHidden.value = qtyInput.value;

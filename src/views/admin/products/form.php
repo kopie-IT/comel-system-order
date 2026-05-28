@@ -183,24 +183,31 @@ $images    = $images ?? [];
         <div>
             <div class="flex items-center justify-between mb-2">
                 <label class="text-sm font-semibold text-gray-700">Varian Produk (Warna/Rekaan)</label>
-                <button type="button" id="add-variant-btn"
-                    class="inline-flex items-center gap-1.5 text-xs font-semibold text-pink-500 hover:text-pink-700 bg-pink-50 hover:bg-pink-100 px-3 py-1.5 rounded-xl transition-colors">
-                    <i class="fa-solid fa-plus"></i> Tambah Varian
-                </button>
+                <div class="flex items-center gap-2">
+                    <button type="button" id="same-price-btn"
+                        class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-xl transition-colors">
+                        <i class="fa-solid fa-equals"></i> Sama Harga
+                    </button>
+                    <button type="button" id="add-variant-btn"
+                        class="inline-flex items-center gap-1.5 text-xs font-semibold text-pink-500 hover:text-pink-700 bg-pink-50 hover:bg-pink-100 px-3 py-1.5 rounded-xl transition-colors">
+                        <i class="fa-solid fa-plus"></i> Tambah Varian
+                    </button>
+                </div>
             </div>
             <p class="text-xs text-gray-400 mb-2">Tambah varian jika produk ada pelbagai warna atau rekaan. Kosongkan jika tiada varian.</p>
-            <div class="grid grid-cols-[2.5rem_1fr_5.5rem_4rem_2rem] gap-2 px-1 mb-1">
+            <!-- Column headers: hidden on mobile, shown on sm+ -->
+            <div class="hidden sm:grid sm:grid-cols-[2.5rem_1fr_7rem_5rem_2.5rem] gap-2 px-1 mb-1">
                 <span class="text-xs text-gray-400 font-semibold">Gambar</span>
                 <span class="text-xs text-gray-400 font-semibold">Label Varian</span>
                 <span class="text-xs text-gray-400 font-semibold">Harga (RM)</span>
                 <span class="text-xs text-gray-400 font-semibold">Stok</span>
                 <span></span>
             </div>
-            <div id="variants-container" class="space-y-2">
+            <div id="variants-container" class="space-y-3">
                 <?php foreach ($variants as $variant): ?>
-                <div class="variant-row grid grid-cols-[2.5rem_1fr_5.5rem_4rem_2rem] gap-2 items-center bg-gray-50 rounded-xl p-2">
+                <div class="variant-row bg-gray-50 rounded-xl p-3 flex flex-col gap-2 sm:grid sm:grid-cols-[2.5rem_1fr_7rem_5rem_2.5rem] sm:items-center sm:gap-2 sm:p-2">
                     <!-- Variant image thumbnail / upload trigger -->
-                    <label class="variant-img-label relative w-9 h-9 rounded-lg overflow-hidden border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-pink-400 transition-colors shrink-0 bg-white">
+                    <label class="variant-img-label relative w-10 h-10 sm:w-9 sm:h-9 rounded-lg overflow-hidden border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-pink-400 transition-colors shrink-0 bg-white self-start sm:self-auto">
                         <?php if (!empty($variant['image'])): ?>
                             <img class="variant-img-thumb w-full h-full object-cover" src="<?= e($variant['image']) ?>" alt="">
                             <i class="fa-solid fa-image text-gray-300 text-sm variant-img-placeholder hidden"></i>
@@ -210,17 +217,29 @@ $images    = $images ?? [];
                         <?php endif; ?>
                         <input type="file" name="variant_image[]" accept="image/jpeg,image/png,image/webp" class="variant-img-input sr-only">
                     </label>
-                    <input type="text" name="variant_label[]" value="<?= e($variant['variant_label']) ?>"
-                           placeholder="Contoh: Merah, Biru, Corak Bunga"
-                           class="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-pink-400">
-                    <input type="number" name="variant_price[]" value="<?= e($variant['price']) ?>"
-                           placeholder="0.00" step="0.01" min="0"
-                           class="w-full border-2 border-gray-200 rounded-xl px-2 py-2 text-sm focus:outline-none focus:border-pink-400">
-                    <input type="number" name="variant_stock[]" value="<?= e($variant['stock']) ?>"
-                           placeholder="0" min="0"
-                           class="w-full border-2 border-gray-200 rounded-xl px-2 py-2 text-sm focus:outline-none focus:border-pink-400">
-                    <button type="button" class="remove-variant w-8 h-9 flex items-center justify-center text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors">
-                        <i class="fa-solid fa-times text-sm"></i>
+                    <div class="flex flex-col gap-1 sm:contents">
+                        <label class="text-xs text-gray-400 font-semibold sm:hidden">Label Varian</label>
+                        <input type="text" name="variant_label[]" value="<?= e($variant['variant_label']) ?>"
+                               placeholder="Contoh: Merah, Biru, Corak Bunga"
+                               class="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-pink-400">
+                        <div class="grid grid-cols-2 gap-2 sm:contents">
+                            <div class="flex flex-col gap-1 sm:contents">
+                                <label class="text-xs text-gray-400 font-semibold sm:hidden">Harga (RM)</label>
+                                <input type="number" name="variant_price[]" value="<?= e($variant['price']) ?>"
+                                       placeholder="0.00" step="0.01" min="0"
+                                       class="w-full border-2 border-gray-200 rounded-xl px-2 py-2 text-sm focus:outline-none focus:border-pink-400">
+                            </div>
+                            <div class="flex flex-col gap-1 sm:contents">
+                                <label class="text-xs text-gray-400 font-semibold sm:hidden">Stok</label>
+                                <input type="number" name="variant_stock[]" value="<?= e($variant['stock']) ?>"
+                                       placeholder="0" min="0"
+                                       class="w-full border-2 border-gray-200 rounded-xl px-2 py-2 text-sm focus:outline-none focus:border-pink-400">
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="remove-variant w-full sm:w-8 h-9 flex items-center justify-center gap-1 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors text-xs sm:text-sm">
+                        <i class="fa-solid fa-times"></i>
+                        <span class="sm:hidden">Buang Varian</span>
                     </button>
                 </div>
                 <?php endforeach; ?>
@@ -359,21 +378,33 @@ $images    = $images ?? [];
 
     function makeVariantRow(label, price, stock) {
         const row = document.createElement('div');
-        row.className = 'variant-row grid grid-cols-[2.5rem_1fr_5.5rem_4rem_2rem] gap-2 items-center bg-gray-50 rounded-xl p-2';
+        row.className = 'variant-row bg-gray-50 rounded-xl p-3 flex flex-col gap-2 sm:grid sm:grid-cols-[2.5rem_1fr_7rem_5rem_2.5rem] sm:items-center sm:gap-2 sm:p-2';
         row.innerHTML = `
-            <label class="variant-img-label relative w-9 h-9 rounded-lg overflow-hidden border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-pink-400 transition-colors shrink-0 bg-white">
+            <label class="variant-img-label relative w-10 h-10 sm:w-9 sm:h-9 rounded-lg overflow-hidden border-2 border-dashed border-gray-300 flex items-center justify-center cursor-pointer hover:border-pink-400 transition-colors shrink-0 bg-white self-start sm:self-auto">
                 <img class="variant-img-thumb w-full h-full object-cover hidden" alt="">
                 <i class="fa-solid fa-image text-gray-300 text-sm variant-img-placeholder"></i>
                 <input type="file" name="variant_image[]" accept="image/jpeg,image/png,image/webp" class="variant-img-input sr-only">
             </label>
-            <input type="text" name="variant_label[]" value="${label||''}" placeholder="Contoh: Merah, Biru, Corak Bunga"
-                   class="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-pink-400">
-            <input type="number" name="variant_price[]" value="${price||''}" placeholder="0.00" step="0.01" min="0"
-                   class="w-full border-2 border-gray-200 rounded-xl px-2 py-2 text-sm focus:outline-none focus:border-pink-400">
-            <input type="number" name="variant_stock[]" value="${stock||''}" placeholder="0" min="0"
-                   class="w-full border-2 border-gray-200 rounded-xl px-2 py-2 text-sm focus:outline-none focus:border-pink-400">
-            <button type="button" class="remove-variant w-8 h-9 flex items-center justify-center text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors">
-                <i class="fa-solid fa-times text-sm"></i>
+            <div class="flex flex-col gap-1 sm:contents">
+                <label class="text-xs text-gray-400 font-semibold sm:hidden">Label Varian</label>
+                <input type="text" name="variant_label[]" value="${label||''}" placeholder="Contoh: Merah, Biru, Corak Bunga"
+                       class="w-full border-2 border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-pink-400">
+                <div class="grid grid-cols-2 gap-2 sm:contents">
+                    <div class="flex flex-col gap-1 sm:contents">
+                        <label class="text-xs text-gray-400 font-semibold sm:hidden">Harga (RM)</label>
+                        <input type="number" name="variant_price[]" value="${price||''}" placeholder="0.00" step="0.01" min="0"
+                               class="w-full border-2 border-gray-200 rounded-xl px-2 py-2 text-sm focus:outline-none focus:border-pink-400">
+                    </div>
+                    <div class="flex flex-col gap-1 sm:contents">
+                        <label class="text-xs text-gray-400 font-semibold sm:hidden">Stok</label>
+                        <input type="number" name="variant_stock[]" value="${stock !== undefined && stock !== null && stock !== '' ? stock : 1}" placeholder="0" min="0"
+                               class="w-full border-2 border-gray-200 rounded-xl px-2 py-2 text-sm focus:outline-none focus:border-pink-400">
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="remove-variant w-full sm:w-8 h-9 flex items-center justify-center gap-1 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors text-xs sm:text-sm">
+                <i class="fa-solid fa-times"></i>
+                <span class="sm:hidden">Buang Varian</span>
             </button>`;
         variantsContainer.appendChild(row);
         bindVariantImageRow(row);
@@ -381,6 +412,18 @@ $images    = $images ?? [];
     }
 
     addVariantBtn.addEventListener('click', () => makeVariantRow());
+
+    // Same price: copy first variant price to all other variants
+    document.getElementById('same-price-btn').addEventListener('click', function () {
+        const priceInputs = variantsContainer.querySelectorAll('input[name="variant_price[]"]');
+        if (priceInputs.length < 2) return;
+        const firstPrice = priceInputs[0].value;
+        if (!firstPrice || parseFloat(firstPrice) <= 0) {
+            showAlertModal('Sila masukkan harga untuk varian pertama dahulu.', 'Harga Diperlukan');
+            return;
+        }
+        priceInputs.forEach(inp => { inp.value = firstPrice; });
+    });
 
     // Bind image preview and remove on existing PHP-rendered rows
     document.querySelectorAll('.variant-row').forEach(row => {

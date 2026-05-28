@@ -36,7 +36,11 @@ class CartController {
         $variantLabel  = null;
         $maxStock      = (int)$product['stock'];
 
-        if ($product['category_type'] === 'pakaian') {
+        // Check if product actually has sizes defined
+        $allSizes = (new ProductSize())->forProduct($productId);
+        $hasSizes = !empty($allSizes);
+
+        if ($product['category_type'] === 'pakaian' && $hasSizes) {
             if (!$sizeId) {
                 flash('error', 'Sila pilih saiz.');
                 redirect('/product/' . $productId);

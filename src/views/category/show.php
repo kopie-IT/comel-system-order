@@ -63,7 +63,11 @@
                         <div class="p-3">
                             <p class="font-semibold text-gray-800 text-sm leading-tight line-clamp-2 mb-1"><?= e($product['name']) ?></p>
                             <p class="text-pink-500 font-bold text-sm">
-                                <?= $product['category_type'] === 'pakaian' ? 'Dari ' : '' ?>RM<?= number_format((float)($product['display_price'] ?? $product['price']), 2) ?>
+                                <?php
+                                $showDari = $product['category_type'] === 'pakaian'
+                                    || ($product['category_type'] === 'produk' && (float)$product['price'] == 0);
+                                echo $showDari ? 'Dari ' : '';
+                                ?>RM<?= number_format((float)($product['display_price'] ?? $product['price']), 2) ?>
                             </p>
                         </div>
                     </a>

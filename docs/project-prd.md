@@ -739,3 +739,5 @@ comel-order-system/
 | wa.me | WhatsApp click-to-chat URL format used for notifications |
 | PDO | PHP Data Objects — database abstraction layer used for prepared statements |
 | CSRF | Cross-Site Request Forgery — attack vector mitigated by form tokens |
+
+
