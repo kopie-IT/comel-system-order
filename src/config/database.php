@@ -151,7 +151,18 @@ function getDB(): PDO {
             }
         } catch (PDOException $e) {
             http_response_code(500);
-            die('Database connection failed. Please try again later.');
+            // Temporary debug — remove after fixing DB connection
+            $configPath = dirname(__DIR__) . '/cpanel-config.php';
+            $configLoaded = file_exists($configPath) ? 'YES' : 'NO (file not found at: ' . $configPath . ')';
+            die('<pre>'
+                . 'Database connection failed.' . "\n\n"
+                . 'Error: ' . $e->getMessage() . "\n\n"
+                . 'DB_HOST: ' . DB_HOST . "\n"
+                . 'DB_PORT: ' . DB_PORT . "\n"
+                . 'DB_NAME: ' . DB_NAME . "\n"
+                . 'DB_USER: ' . DB_USER . "\n"
+                . 'cpanel-config.php loaded: ' . $configLoaded . "\n"
+                . '</pre>');
         }
     }
     return $pdo;
