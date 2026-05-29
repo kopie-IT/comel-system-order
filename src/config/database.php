@@ -2,14 +2,24 @@
 
 // -------------------------------------------------------
 // Database Configuration
-// For cPanel: fill in your actual DB credentials below.
-// For Docker: values are read from environment variables.
+// Priority order:
+//   1. cpanel-config.php (one level above public_html — never in web root)
+//   2. Environment variables (Docker / server-level)
+//   3. Hardcoded fallback defaults (change before deploying)
 // -------------------------------------------------------
-define('DB_HOST',    getenv('DB_HOST')    ?: 'localhost');
-define('DB_PORT',    getenv('DB_PORT')    ?: '3306');
-define('DB_NAME',    getenv('DB_NAME')    ?: 'your_cpanel_dbname');
-define('DB_USER',    getenv('DB_USER')    ?: 'your_cpanel_dbuser');
-define('DB_PASS',    getenv('DB_PASS')    ?: 'your_cpanel_dbpass');
+
+// Load cPanel config file if it exists (sits at ~/cpanel-config.php)
+$_cpanelConfig = dirname(__DIR__, 2) . '/cpanel-config.php';
+if (file_exists($_cpanelConfig)) {
+    require_once $_cpanelConfig;
+}
+unset($_cpanelConfig);
+
+define('DB_HOST',    getenv('DB_HOST')    ?: (defined('CPANEL_DB_HOST')    ? CPANEL_DB_HOST    : 'localhost'));
+define('DB_PORT',    getenv('DB_PORT')    ?: (defined('CPANEL_DB_PORT')    ? CPANEL_DB_PORT    : '3306'));
+define('DB_NAME',    getenv('DB_NAME')    ?: (defined('CPANEL_DB_NAME')    ? CPANEL_DB_NAME    : 'your_cpanel_dbname'));
+define('DB_USER',    getenv('DB_USER')    ?: (defined('CPANEL_DB_USER')    ? CPANEL_DB_USER    : 'your_cpanel_dbuser'));
+define('DB_PASS',    getenv('DB_PASS')    ?: (defined('CPANEL_DB_PASS')    ? CPANEL_DB_PASS    : 'your_cpanel_dbpass'));
 define('DB_CHARSET', 'utf8mb4');
 
 function getDB(): PDO {

@@ -10,6 +10,14 @@ public/uploads/qr/*
 # Environment overrides
 src/config/local.php
 .env
+cpanel-config.php
+
+# cPanel uploads (persisted on server)
+public_html/uploads/products/*
+public_html/uploads/qr/*
+public_html/uploads/courier/*
+!public_html/uploads/products/.gitkeep
+!public_html/uploads/qr/.gitkeep
 
 # OS files
 .DS_Store
