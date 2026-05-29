@@ -104,7 +104,7 @@ class AdminOrderController {
 
         if (!$result['success']) {
             // Fallback: base64 from disk
-            $filePath = ROOT_PATH . '/public' . $slipPath;
+            $filePath = PUBLIC_PATH . $slipPath;
             $result   = $wawp->sendImageFile($customerPhone, $filePath, $msg);
         }
         if (!$result['success']) {

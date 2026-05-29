@@ -119,8 +119,8 @@ class AdminProductController {
         $deleteIds = array_map('intval', $_POST['delete_image'] ?? []);
         foreach ($deleteIds as $imgId) {
             $path = $productModel->deleteImage($imgId);
-            if ($path && file_exists(ROOT_PATH . '/public' . $path)) {
-                unlink(ROOT_PATH . '/public' . $path);
+            if ($path && file_exists(PUBLIC_PATH . $path)) {
+                unlink(PUBLIC_PATH . $path);
             }
         }
 
@@ -144,8 +144,8 @@ class AdminProductController {
         // Delete old variant images from disk before re-saving
         $oldVariants = (new ProductVariant())->forProduct($id);
         foreach ($oldVariants as $ov) {
-            if (!empty($ov['image']) && file_exists(ROOT_PATH . '/public' . $ov['image'])) {
-                unlink(ROOT_PATH . '/public' . $ov['image']);
+            if (!empty($ov['image']) && file_exists(PUBLIC_PATH . $ov['image'])) {
+                unlink(PUBLIC_PATH . $ov['image']);
             }
         }
         (new ProductVariant())->deleteForProduct($id);
@@ -198,7 +198,7 @@ class AdminProductController {
     private function handleMultipleImageUpload(?array $files): array {
         if (!$files || empty($files['name'][0])) return [];
         $paths = [];
-        $dir   = ROOT_PATH . '/public/uploads/products/';
+        $dir   = PUBLIC_PATH . '/uploads/products/';
         if (!is_dir($dir)) { mkdir($dir, 0755, true); }
         foreach ($files['tmp_name'] as $i => $tmpName) {
             if (empty($files['name'][$i])) continue;
@@ -217,7 +217,7 @@ class AdminProductController {
         if (!is_array($labels)) return;
 
         $variantModel = new ProductVariant();
-        $dir          = ROOT_PATH . '/public/uploads/products/';
+        $dir          = PUBLIC_PATH . '/uploads/products/';
         if (!is_dir($dir)) { mkdir($dir, 0755, true); }
 
         // Normalise the variant_image file array into per-index entries

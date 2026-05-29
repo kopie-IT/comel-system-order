@@ -2,9 +2,10 @@
 
 declare(strict_types=1);
 
-define('ROOT_PATH', dirname(__DIR__));
-define('SRC_PATH',  ROOT_PATH . '/src');
-define('BASE_URL',  '');
+define('ROOT_PATH',   dirname(__DIR__));
+define('SRC_PATH',    ROOT_PATH . '/src');
+define('PUBLIC_PATH', __DIR__);   // always points to the actual web root folder
+define('BASE_URL',    '');
 
 // Keep admin session alive until explicit logout (30 days)
 ini_set('session.gc_maxlifetime', '2592000');

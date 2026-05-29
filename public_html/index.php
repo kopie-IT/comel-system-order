@@ -8,9 +8,10 @@ declare(strict_types=1);
 // ROOT_PATH points to the parent of public_html (~/),
 // which is the cPanel home directory.
 // -------------------------------------------------------
-define('ROOT_PATH', dirname(__DIR__));
-define('SRC_PATH',  ROOT_PATH . '/src');
-define('BASE_URL',  '');
+define('ROOT_PATH',   dirname(__DIR__));
+define('SRC_PATH',    ROOT_PATH . '/src');
+define('PUBLIC_PATH', __DIR__);   // always points to the actual web root folder
+define('BASE_URL',    '');
 
 // Keep admin session alive until explicit logout (30 days)
 ini_set('session.gc_maxlifetime', '2592000');
@@ -159,6 +160,7 @@ function base_url(): string {
 // -------------------------------------------------------
 $uri    = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $uri    = rtrim($uri, '/') ?: '/';
+$uri    = strtolower($uri);   // normalise case — fixes /Admin, /ADMIN, etc.
 $method = $_SERVER['REQUEST_METHOD'];
 
 // Segment helper

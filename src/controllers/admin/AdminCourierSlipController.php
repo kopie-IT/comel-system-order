@@ -46,14 +46,14 @@ class AdminCourierSlipController {
                 return;
             }
 
-            $uploadDir = ROOT_PATH . '/public/uploads/courier/';
+            $uploadDir = PUBLIC_PATH . '/uploads/courier/';
             if (!is_dir($uploadDir)) {
                 mkdir($uploadDir, 0755, true);
             }
 
             // Delete old slip if exists
-            if ($slipPath && file_exists(ROOT_PATH . '/public' . $slipPath)) {
-                unlink(ROOT_PATH . '/public' . $slipPath);
+            if ($slipPath && file_exists(PUBLIC_PATH . $slipPath)) {
+                unlink(PUBLIC_PATH . $slipPath);
             }
 
             $ext      = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
@@ -111,7 +111,7 @@ class AdminCourierSlipController {
                     $result  = $wawp->sendImageMessage($customerPhone, $slipUrl, $msg);
 
                     if (!$result['success']) {
-                        $filePath = ROOT_PATH . '/public' . $slipPath;
+                        $filePath = PUBLIC_PATH . $slipPath;
                         $result   = $wawp->sendImageFile($customerPhone, $filePath, $msg);
                     }
                     if (!$result['success']) {

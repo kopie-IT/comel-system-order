@@ -229,7 +229,7 @@ $statusColor = [
             <?php if ($order['courier_slip']): ?>
             <?php $slipExt = strtolower(pathinfo($order['courier_slip'], PATHINFO_EXTENSION));
                   $isImg   = in_array($slipExt, ['jpg','jpeg','png','webp']);
-                  $slipFullPath = ROOT_PATH . '/public' . $order['courier_slip'];
+                  $slipFullPath = PUBLIC_PATH . $order['courier_slip'];
                   $slipSize     = file_exists($slipFullPath) ? filesize($slipFullPath) : 0;
                   $slipSizeStr  = $slipSize > 0
                       ? ($slipSize >= 1048576

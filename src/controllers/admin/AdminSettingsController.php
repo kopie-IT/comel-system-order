@@ -64,15 +64,15 @@ class AdminSettingsController {
 
                 $ext      = $mimeType === 'image/png' ? 'png' : 'jpg';
                 $filename = 'qr_' . time() . '.' . $ext;
-                $dest     = ROOT_PATH . '/public/uploads/qr/' . $filename;
+                $dest     = PUBLIC_PATH . '/uploads/qr/' . $filename;
 
-                if (!is_dir(ROOT_PATH . '/public/uploads/qr')) {
-                    mkdir(ROOT_PATH . '/public/uploads/qr', 0755, true);
+                if (!is_dir(PUBLIC_PATH . '/uploads/qr')) {
+                    mkdir(PUBLIC_PATH . '/uploads/qr', 0755, true);
                 }
 
                 $oldQr = $model->get('qr_code_image');
-                if ($oldQr && file_exists(ROOT_PATH . '/public' . $oldQr)) {
-                    unlink(ROOT_PATH . '/public' . $oldQr);
+                if ($oldQr && file_exists(PUBLIC_PATH . $oldQr)) {
+                    unlink(PUBLIC_PATH . $oldQr);
                 }
 
                 move_uploaded_file($file['tmp_name'], $dest);
