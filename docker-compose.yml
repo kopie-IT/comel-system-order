@@ -19,6 +19,21 @@
       - uploads_qr:/var/www/html/public/uploads/qr
     restart: unless-stopped
 
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: comel_phpmyadmin
+    ports:
+      - "8082:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: rootpass123
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
   db:
     image: mysql:8.0
     container_name: comel_db
