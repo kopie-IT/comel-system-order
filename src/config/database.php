@@ -3,13 +3,13 @@
 // -------------------------------------------------------
 // Database Configuration
 // Priority order:
-//   1. cpanel-config.php (one level above public_html — never in web root)
+//   1. cpanel-config.php (project root — never inside public_html)
 //   2. Environment variables (Docker / server-level)
 //   3. Hardcoded fallback defaults (change before deploying)
 // -------------------------------------------------------
 
-// Load cPanel config file if it exists (sits at ~/cpanel-config.php)
-$_cpanelConfig = dirname(__DIR__, 2) . '/cpanel-config.php';
+// Load cPanel config file if it exists (sits at project root: ~/cpanel-config.php)
+$_cpanelConfig = dirname(__DIR__) . '/cpanel-config.php';
 if (file_exists($_cpanelConfig)) {
     require_once $_cpanelConfig;
 }
