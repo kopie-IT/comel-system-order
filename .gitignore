@@ -10,7 +10,6 @@ public/uploads/qr/*
 # Environment overrides
 src/config/local.php
 .env
-cpanel-config.php
 
 # cPanel uploads (persisted on server)
 public_html/uploads/products/*
