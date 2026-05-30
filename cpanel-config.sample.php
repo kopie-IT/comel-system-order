@@ -5,8 +5,8 @@
 //
 // INSTRUCTIONS:
 //   1. Copy this file and rename it to: cpanel-config.php
-//   2. Place it ONE LEVEL ABOVE public_html (i.e. ~/cpanel-config.php)
-//      It must NOT be inside public_html — it would be publicly accessible.
+//   2. Place this file at the PROJECT ROOT (same as index.php, src/, assets/, uploads/)
+//      It must NOT be inside a web-accessible folder.
 //   3. Fill in your actual cPanel database credentials below.
 //   4. DO NOT commit cpanel-config.php to git (it is in .gitignore).
 //

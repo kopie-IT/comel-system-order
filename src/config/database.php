@@ -3,17 +3,18 @@
 // -------------------------------------------------------
 // Database Configuration
 // Priority order:
-//   1. cpanel-config.php (project root — never inside public_html)
+//   1. cpanel-config.php (project root)
 //   2. Environment variables (Docker / server-level)
 //   3. Hardcoded fallback defaults (change before deploying)
 // -------------------------------------------------------
 
 // Load cPanel config file if it exists (sits at project root: ~/cpanel-config.php)
-$_cpanelConfig = dirname(__DIR__) . '/cpanel-config.php';
+$_cpanelRoot = dirname(__DIR__, 2);
+$_cpanelConfig = $_cpanelRoot . '/cpanel-config.php';
 if (file_exists($_cpanelConfig)) {
     require_once $_cpanelConfig;
 }
-unset($_cpanelConfig);
+unset($_cpanelRoot, $_cpanelConfig);
 
 define('DB_HOST',    getenv('DB_HOST')    ?: (defined('CPANEL_DB_HOST')    ? CPANEL_DB_HOST    : 'localhost'));
 define('DB_PORT',    getenv('DB_PORT')    ?: (defined('CPANEL_DB_PORT')    ? CPANEL_DB_PORT    : '3306'));
@@ -152,7 +153,7 @@ function getDB(): PDO {
         } catch (PDOException $e) {
             http_response_code(500);
             // Temporary debug — remove after fixing DB connection
-            $configPath = dirname(__DIR__) . '/cpanel-config.php';
+            $configPath = dirname(__DIR__, 2) . '/cpanel-config.php';
             $configLoaded = file_exists($configPath) ? 'YES' : 'NO (file not found at: ' . $configPath . ')';
             die('<pre>'
                 . 'Database connection failed.' . "\n\n"

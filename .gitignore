@@ -8,9 +8,10 @@ uploads/courier/*
 !uploads/products/.gitkeep
 !uploads/qr/.gitkeep
 
-# Environment overrides
+# Environment / secrets (never commit)
 src/config/local.php
 .env
+cpanel-config.php
 
 # OS files
 .DS_Store
