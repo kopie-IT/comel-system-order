@@ -79,6 +79,55 @@ class AdminSettingsController {
                 $model->set('qr_code_image', '/uploads/qr/' . $filename);
             }
 
+            // Handle favicon upload
+            if (!empty($_FILES['favicon']['name'])) {
+                $file = $_FILES['favicon'];
+
+                $uploadErr = (int)($file['error'] ?? UPLOAD_ERR_NO_FILE);
+                if ($uploadErr !== UPLOAD_ERR_OK || empty($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
+                    flash('error', 'Muat naik favicon gagal: ' . $this->uploadErrorMessage($uploadErr));
+                    redirect('/admin/settings');
+                    return;
+                }
+
+                $allowed  = ['image/x-icon', 'image/vnd.microsoft.icon', 'image/png', 'image/jpeg', 'image/svg+xml'];
+                $maxSize  = 1 * 1024 * 1024; // 1MB limit
+
+                $finfo    = new finfo(FILEINFO_MIME_TYPE);
+                $mimeType = $finfo->file($file['tmp_name']);
+
+                if (!in_array($mimeType, $allowed)) {
+                    flash('error', 'Format fail tidak disokong. Sila muat naik fail .ico, PNG, JPEG atau SVG sahaja.');
+                    redirect('/admin/settings');
+                    return;
+                }
+                if ($file['size'] > $maxSize) {
+                    flash('error', 'Saiz fail terlalu besar. Maksimum 1MB.');
+                    redirect('/admin/settings');
+                    return;
+                }
+
+                // Convert to ICO if needed
+                $dest = PUBLIC_PATH . '/favicon.ico';
+                
+                // Remove old favicon if exists
+                if (file_exists($dest)) {
+                    unlink($dest);
+                }
+
+                // If it's already an ICO file, just move it
+                if ($mimeType === 'image/x-icon' || $mimeType === 'image/vnd.microsoft.icon') {
+                    move_uploaded_file($file['tmp_name'], $dest);
+                } else {
+                    // Convert to ICO using GD library
+                    if (!$this->convertToIco($file['tmp_name'], $dest)) {
+                        // If conversion fails, fall back to moving the original file
+                        move_uploaded_file($file['tmp_name'], $dest);
+                        flash('success', 'Tetapan berjaya disimpan. Favicon dimuat naik tetapi mungkin memerlukan penukaran manual ke format .ico untuk hasil terbaik.');
+                    }
+                }
+            }
+
             flash('success', 'Tetapan berjaya disimpan.');
         } catch (\Throwable $e) {
             flash('error', 'Gagal menyimpan tetapan: ' . $e->getMessage());
@@ -223,6 +272,84 @@ class AdminSettingsController {
                 return 'Sambungan PHP menghalang muat naik.';
             default:
                 return "Ralat tidak diketahui (kod {$code}). Had server: upload_max_filesize={$maxUpload}, post_max_size={$maxPost}.";
+        }
+    }
+
+    /**
+     * Convert an image to ICO format
+     */
+    private function convertToIco(string $sourcePath, string $destPath): bool {
+        try {
+            // Check if GD is available
+            if (!extension_loaded('gd')) {
+                return false;
+            }
+
+            // Get image info
+            $imageInfo = getimagesize($sourcePath);
+            if ($imageInfo === false) {
+                return false;
+            }
+
+            // Create image resource based on mime type
+            $sourceImage = null;
+            switch ($imageInfo[2]) {
+                case IMAGETYPE_JPEG:
+                    $sourceImage = imagecreatefromjpeg($sourcePath);
+                    break;
+                case IMAGETYPE_PNG:
+                    $sourceImage = imagecreatefrompng($sourcePath);
+                    break;
+                default:
+                    return false;
+            }
+
+            if ($sourceImage === false) {
+                return false;
+            }
+
+            // Create ICO file
+            $icoFile = fopen($destPath, 'wb');
+            if ($icoFile === false) {
+                imagedestroy($sourceImage);
+                return false;
+            }
+
+            // ICO header
+            fwrite($icoFile, pack('v', 0)); // Reserved
+            fwrite($icoFile, pack('v', 1)); // Type (1 = ICO)
+            fwrite($icoFile, pack('v', 1)); // Number of images
+
+            // Image entry
+            $width = imagesx($sourceImage);
+            $height = imagesy($sourceImage);
+            $width = $width > 255 ? 0 : $width; // 0 means 256
+            $height = $height > 255 ? 0 : $height;
+
+            fwrite($icoFile, pack('C', $width)); // Width
+            fwrite($icoFile, pack('C', $height)); // Height
+            fwrite($icoFile, pack('C', 0)); // Color palette
+            fwrite($icoFile, pack('C', 0)); // Reserved
+            fwrite($icoFile, pack('v', 1)); // Color planes
+            fwrite($icoFile, pack('v', 32)); // Bits per pixel
+            fwrite($icoFile, pack('V', 0)); // Image size (will be updated)
+            fwrite($icoFile, pack('V', 22)); // Image offset
+
+            // Convert to PNG for ICO
+            ob_start();
+            imagepng($sourceImage);
+            $pngData = ob_get_contents();
+            ob_end_clean();
+
+            // Write PNG data
+            fwrite($icoFile, $pngData);
+
+            fclose($icoFile);
+            imagedestroy($sourceImage);
+
+            return true;
+        } catch (\Exception $e) {
+            return false;
         }
     }
 }

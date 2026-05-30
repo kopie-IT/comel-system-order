@@ -60,6 +60,25 @@
             <p class="text-xs text-gray-400 mt-1">JPEG atau PNG sahaja (WhatsApp tidak menerima WebP untuk QR). Maks 2MB. Kosongkan jika tidak mahu tukar.</p>
         </div>
 
+        <!-- Favicon upload -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fa-solid fa-star text-yellow-500 mr-1"></i> Favicon (Ikon Website)
+            </label>
+            <?php if (file_exists('favicon.ico')): ?>
+                <div class="mb-3">
+                    <p class="text-xs text-gray-400 mb-1">Favicon semasa:</p>
+                    <img src="/favicon.ico" alt="Favicon"
+                         class="w-16 h-16 object-contain border rounded-lg bg-gray-50 p-2">
+                </div>
+            <?php endif; ?>
+            <input type="file" name="favicon" accept="image/x-icon,image/png,image/jpeg,image/svg+xml"
+                class="block text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0
+                       file:text-sm file:font-semibold file:bg-yellow-50 file:text-yellow-600 hover:file:bg-yellow-100">
+            <p class="text-xs text-gray-400 mt-1">Fail .ico, PNG, JPEG atau SVG sahaja. Disyorkan: 16x16, 32x32 atau 48x48 pixel. Aplikasi akan menukar ke format .ico secara automatik.</p>
+            <p class="text-xs text-gray-400 mt-1">Nota: Untuk hasil terbaik, gunakan alat dalam talian untuk menukar imej kepada format .ico seperti <a href="https://favicon.io/" target="_blank" class="text-blue-500 hover:underline">favicon.io</a></p>
+        </div>
+
         <!-- Payment instructions -->
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1">
