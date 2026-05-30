@@ -10,7 +10,7 @@ RUN docker-php-ext-install pdo pdo_mysql
 RUN docker-php-ext-install fileinfo
 
 # Set Apache DocumentRoot to /var/www/html/public
-ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+ENV APACHE_DOCUMENT_ROOT=/var/www/html
 
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
     /etc/apache2/sites-available/*.conf && \
@@ -24,9 +24,9 @@ RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
 COPY . /var/www/html/
 
 # Set correct permissions for uploads
-RUN mkdir -p /var/www/html/public/uploads/products \
-             /var/www/html/public/uploads/qr && \
-    chown -R www-data:www-data /var/www/html/public/uploads && \
-    chmod -R 755 /var/www/html/public/uploads
+RUN mkdir -p /var/www/html/uploads/products \
+             /var/www/html/uploads/qr && \
+    chown -R www-data:www-data /var/www/html/uploads && \
+    chmod -R 755 /var/www/html/uploads
 
 EXPOSE 80
