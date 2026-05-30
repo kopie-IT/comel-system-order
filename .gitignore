@@ -1,22 +1,16 @@
 ﻿# Dependencies
 vendor/
 
-# Uploads (persisted via Docker volumes)
-public/uploads/products/*
-public/uploads/qr/*
-!public/uploads/products/.gitkeep
-!public/uploads/qr/.gitkeep
+# Uploads (persisted via Docker volumes / cPanel)
+uploads/products/*
+uploads/qr/*
+uploads/courier/*
+!uploads/products/.gitkeep
+!uploads/qr/.gitkeep
 
 # Environment overrides
 src/config/local.php
 .env
-
-# cPanel uploads (persisted on server)
-public_html/uploads/products/*
-public_html/uploads/qr/*
-public_html/uploads/courier/*
-!public_html/uploads/products/.gitkeep
-!public_html/uploads/qr/.gitkeep
 
 # OS files
 .DS_Store

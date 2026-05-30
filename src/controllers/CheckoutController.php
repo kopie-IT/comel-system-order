@@ -186,7 +186,7 @@ class CheckoutController {
                         // Attempt 2: multipart upload from disk (works on localhost
                         // or where base_url isn't reachable by wawp.net).
                         if (!$qrResult['success']) {
-                            $qrLocalPath = ROOT_PATH . '/public/' . ltrim($qrImage, '/');
+                            $qrLocalPath = ROOT_PATH . '/' . ltrim($qrImage, '/');
                             if (file_exists($qrLocalPath) && is_readable($qrLocalPath)) {
                                 $qrResult = $wawp->sendImageFile($phone, $qrLocalPath, $qrCaption);
                             }

@@ -11,14 +11,14 @@
 //   4. DO NOT commit cpanel-config.php to git (it is in .gitignore).
 //
 // cPanel server layout:
-//   ~/                        ← cPanel home directory
+//   ~/                        ← cPanel home directory / project root
 //   ├── cpanel-config.php     ← THIS FILE (outside web root)
 //   ├── src/                  ← app source (outside web root)
 //   ├── database/             ← SQL dumps (outside web root)
-//   └── public_html/          ← web root (upload contents of public_html/)
-//       ├── index.php
-//       ├── .htaccess
-//       └── uploads/
+//   ├── index.php             ← web entry point
+//   ├── .htaccess
+//   ├── assets/               ← CSS, JS, images
+//   └── uploads/
 // -------------------------------------------------------
 
 define('CPANEL_DB_HOST', 'localhost');

@@ -4,17 +4,19 @@
 // cPanel Database Configuration
 //
 // INSTRUCTIONS:
-//   1. Place this file at the PROJECT ROOT (same level as src/, public_html/)
-//      i.e. ~/cpanel-config.php on your cPanel server
-//      It must NOT be inside public_html — it would be publicly accessible.
-//   2. DO NOT commit this file to git (it is in .gitignore).
+//   1. Place this file at the PROJECT ROOT (same level as index.php, src/, etc.)
 //
-// cPanel server layout:
-//   ~/                        ← cPanel home directory (project root)
-//   ├── cpanel-config.php     ← THIS FILE
-//   ├── src/                  ← app source (outside web root)
-//   ├── database/             ← SQL dumps (outside web root)
-//   └── public_html/          ← web root
+//      It must NOT be inside a web-accessible folder.
+//
+// Production & local layout:
+//   ~/                          ← project root
+//   ├── cpanel-config.php       ← THIS FILE (outside web root)
+//   ├── src/                    ← app source (outside web root)
+//   ├── database/               ← SQL dumps (outside web root)
+//   ├── index.php               ← web entry point
+//   ├── .htaccess
+//   ├── assets/                 ← CSS, JS, images
+//   └── uploads/
 // -------------------------------------------------------
 
 define('CPANEL_DB_HOST', 'localhost');

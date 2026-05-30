@@ -3,14 +3,12 @@
 declare(strict_types=1);
 
 // -------------------------------------------------------
-// cPanel Deployment: public_html is the web root.
-// src/, database/ sit one level above (~/src, ~/database).
-// ROOT_PATH points to the parent of public_html (~/),
-// which is the cPanel home directory.
+// This file is the web root entry point.
+// src/, database/ are siblings in the same directory.
 // -------------------------------------------------------
-define('ROOT_PATH',   dirname(__DIR__));
-define('SRC_PATH',    ROOT_PATH . '/src');
-define('PUBLIC_PATH', __DIR__);   // always points to the actual web root folder
+define('ROOT_PATH',   __DIR__);
+define('SRC_PATH',    __DIR__ . '/src');
+define('PUBLIC_PATH', __DIR__);
 define('BASE_URL',    '');
 
 // Keep admin session alive until explicit logout (30 days)

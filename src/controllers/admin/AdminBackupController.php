@@ -81,7 +81,7 @@ class AdminBackupController {
             return;
         }
 
-        $uploadsDir = ROOT_PATH . '/public/uploads';
+        $uploadsDir = ROOT_PATH . '/uploads';
         if (!is_dir($uploadsDir)) {
             flash('error', 'Folder uploads tidak dijumpai.');
             redirect('/admin/backup');
