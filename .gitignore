@@ -2,11 +2,12 @@
 vendor/
 
 # Uploads (persisted via Docker volumes / cPanel)
-uploads/products/*
-uploads/qr/*
-uploads/courier/*
-!uploads/products/.gitkeep
-!uploads/qr/.gitkeep
+# Commenting out to include images in git
+# uploads/products/*
+# uploads/qr/*
+# uploads/courier/*
+# !uploads/products/.gitkeep
+# !uploads/qr/.gitkeep
 
 # Environment / secrets (never commit)
 src/config/local.php

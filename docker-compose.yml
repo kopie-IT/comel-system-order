@@ -15,8 +15,6 @@
         condition: service_healthy
     volumes:
       - .:/var/www/html
-      - uploads_products:/var/www/html/uploads/products
-      - uploads_qr:/var/www/html/uploads/qr
     restart: unless-stopped
 
   phpmyadmin:
@@ -55,5 +53,3 @@
 
 volumes:
   db_data:
-  uploads_products:
-  uploads_qr:
