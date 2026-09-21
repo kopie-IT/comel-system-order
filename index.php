@@ -242,6 +242,10 @@ if ($seg0 === '') {
             else { $ctrl->edit((int)$seg3); }
         } elseif ($seg2 === 'delete' && $seg3 !== '' && $method === 'POST') {
             $ctrl->destroy((int)$seg3);
+        } elseif ($seg2 === 'restore' && $seg3 !== '' && $method === 'POST') {
+            $ctrl->restore((int)$seg3);
+        } elseif ($seg2 === 'force-delete' && $seg3 !== '' && $method === 'POST') {
+            $ctrl->forceDelete((int)$seg3);
         } else {
             $ctrl->index();
         }
@@ -259,6 +263,8 @@ if ($seg0 === '') {
             $ctrl->destroy((int)$seg3);
         } elseif ($seg2 === 'restore' && $seg3 !== '' && $method === 'POST') {
             $ctrl->restore((int)$seg3);
+        } elseif ($seg2 === 'force-delete' && $seg3 !== '' && $method === 'POST') {
+            $ctrl->forceDelete((int)$seg3);
         } else {
             $ctrl->index();
         }

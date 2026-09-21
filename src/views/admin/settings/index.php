@@ -79,6 +79,48 @@
             <p class="text-xs text-gray-400 mt-1">Nota: Untuk hasil terbaik, gunakan alat dalam talian untuk menukar imej kepada format .ico seperti <a href="https://favicon.io/" target="_blank" class="text-blue-500 hover:underline">favicon.io</a></p>
         </div>
 
+        <!-- Logo upload -->
+        <div>
+            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                <i class="fa-solid fa-image text-gray-500 mr-1"></i> Logo
+            </label>
+            <?php if (!empty($settings['logo_image'])): ?>
+                <div class="mb-3">
+                    <p class="text-xs text-gray-400 mb-1">Logo semasa:</p>
+                    <img src="<?= e($settings['logo_image']) ?>" alt="Logo"
+                         class="h-16 object-contain border rounded-lg bg-gray-50 p-2">
+                </div>
+            <?php endif; ?>
+            <input type="file" name="logo" accept="image/png,image/jpeg,image/gif,image/webp,image/svg+xml"
+                class="block text-sm text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0
+                       file:text-sm file:font-semibold file:bg-pink-50 file:text-pink-600 hover:file:bg-pink-100">
+            <p class="text-xs text-gray-400 mt-1">PNG, JPEG, GIF, WebP atau SVG sahaja. Maks 5MB. Jika dikosongkan, logo semasa tidak akan tukar.</p>
+        </div>
+
+        <!-- Social Media Links -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">
+                    <i class="fa-brands fa-facebook text-blue-500 mr-1"></i> Pautan Facebook
+                </label>
+                <input type="url" name="facebook_url"
+                       value="<?= e($settings['facebook_url'] ?? '') ?>"
+                       placeholder="https://facebook.com/yourpage"
+                       class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-pink-400">
+                <p class="text-xs text-gray-400 mt-1">Pautan profil Facebook rasmi.</p>
+            </div>
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-1">
+                    <i class="fa-brands fa-instagram text-pink-500 mr-1"></i> Pautan Instagram
+                </label>
+                <input type="url" name="instagram_url"
+                       value="<?= e($settings['instagram_url'] ?? '') ?>"
+                       placeholder="https://instagram.com/yourpage"
+                       class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-pink-400">
+                <p class="text-xs text-gray-400 mt-1">Pautan profil Instagram rasmi.</p>
+            </div>
+        </div>
+
         <!-- Payment instructions -->
         <div>
             <label class="block text-sm font-semibold text-gray-700 mb-1">

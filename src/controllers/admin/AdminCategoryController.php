@@ -57,8 +57,22 @@ class AdminCategoryController {
             redirect('/admin/categories');
             return;
         }
-        $model->delete($id);
-        flash('success', 'Kategori berjaya dipadam.');
+        $model->softDelete($id);
+        flash('success', 'Kategori berjaya dilumpuhkan.');
+        redirect('/admin/categories');
+    }
+
+    public function forceDelete(int $id): void {
+        csrf_verify();
+        (new Category())->forceDelete($id);
+        flash('success', 'Kategori dan semua data berkaitan berjaya dipadam sepenuhnya.');
+        redirect('/admin/categories');
+    }
+
+    public function restore(int $id): void {
+        csrf_verify();
+        (new Category())->restore($id);
+        flash('success', 'Kategori berjaya dipulihkan.');
         redirect('/admin/categories');
     }
 

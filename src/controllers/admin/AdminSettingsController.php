@@ -21,7 +21,9 @@ class AdminSettingsController {
             $wawpApiKey      = trim($_POST['wawp_api_key'] ?? '');
             $wawpSenderId    = trim($_POST['wawp_sender_id'] ?? '');
             $notifMethod     = in_array($_POST['notification_method'] ?? '', ['wawp', 'wa_link'])
-                               ? $_POST['notification_method'] : 'wa_link';
+                                ? $_POST['notification_method'] : 'wa_link';
+            $facebook        = trim($_POST['facebook_url'] ?? '');
+            $instagram       = trim($_POST['instagram_url'] ?? '');
 
             $model->set('app_name', $appName);
             $model->set('base_url', $baseUrl);
@@ -33,6 +35,8 @@ class AdminSettingsController {
             $model->set('wawp_api_key', $wawpApiKey);
             $model->set('wawp_sender_id', $wawpSenderId);
             $model->set('notification_method', $notifMethod);
+            $model->set('facebook_url', $facebook);
+            $model->set('instagram_url', $instagram);
 
             // Handle QR code upload
             if (!empty($_FILES['qr_code_image']['name'])) {
@@ -126,6 +130,40 @@ class AdminSettingsController {
                         flash('success', 'Tetapan berjaya disimpan. Favicon dimuat naik tetapi mungkin memerlukan penukaran manual ke format .ico untuk hasil terbaik.');
                     }
                 }
+            }
+
+            // Handle logo upload
+            if (!empty($_FILES['logo']['name'])) {
+                $file = $_FILES['logo'];
+                $uploadErr = (int)($file['error'] ?? UPLOAD_ERR_NO_FILE);
+                if ($uploadErr !== UPLOAD_ERR_OK || empty($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
+                    flash('error', 'Muat naik logo gagal.');
+                    redirect('/admin/settings');
+                    return;
+                }
+                $allowed = ['image/png', 'image/jpeg', 'image/gif', 'image/webp', 'image/svg+xml'];
+                $maxSize = 5 * 1024 * 1024; // 5MB limit
+                $finfo = new finfo(FILEINFO_MIME_TYPE);
+                $mimeType = $finfo->file($file['tmp_name']);
+                if (!in_array($mimeType, $allowed)) {
+                    flash('error', 'Format logo tidak disokong. Gunakan PNG, JPEG, GIF, WebP atau SVG sahaja.');
+                    redirect('/admin/settings');
+                    return;
+                }
+                if ($file['size'] > $maxSize) {
+                    flash('error', 'Saiz logo terlalu besar. Maksimum 5MB.');
+                    redirect('/admin/settings');
+                    return;
+                }
+                $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
+                $filename = 'logo_' . time() . '_' . bin2hex(random_bytes(4)) . '.' . strtolower($ext);
+                $destDir = PUBLIC_PATH . '/uploads/logos';
+                if (!is_dir($destDir)) { mkdir($destDir, 0755, true); }
+                $dest = $destDir . '/' . $filename;
+                move_uploaded_file($file['tmp_name'], $dest);
+                $oldLogo = $model->get('logo_image');
+                if ($oldLogo && file_exists(PUBLIC_PATH . $oldLogo)) { unlink(PUBLIC_PATH . $oldLogo); }
+                $model->set('logo_image', '/uploads/logos/' . $filename);
             }
 
             flash('success', 'Tetapan berjaya disimpan.');

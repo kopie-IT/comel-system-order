@@ -3,7 +3,7 @@
     build: .
     container_name: comel_app
     ports:
-      - "8080:80"
+      - "8090:80"
     environment:
       DB_HOST: db
       DB_PORT: 3306
@@ -21,7 +21,7 @@
     image: phpmyadmin:latest
     container_name: comel_phpmyadmin
     ports:
-      - "8082:80"
+      - "8092:80"
     environment:
       PMA_HOST: db
       PMA_PORT: 3306
@@ -42,7 +42,7 @@
       MYSQL_PASSWORD: comel_pass123
     volumes:
       - db_data:/var/lib/mysql
-      - ./database/schema.sql:/docker-entrypoint-initdb.d/01_schema.sql
+      - ./database/comel_store.sql:/docker-entrypoint-initdb.d/01_schema.sql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpass123"]
       interval: 10s

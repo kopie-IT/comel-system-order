@@ -8,7 +8,12 @@ class Category {
     }
 
     public function all(): array {
-        $stmt = $this->db->query('SELECT * FROM categories ORDER BY name ASC');
+        $stmt = $this->db->query('SELECT * FROM categories WHERE deleted_at IS NULL ORDER BY name ASC');
+        return $stmt->fetchAll();
+    }
+
+    public function trashed(): array {
+        $stmt = $this->db->query('SELECT * FROM categories WHERE deleted_at IS NOT NULL ORDER BY deleted_at DESC');
         return $stmt->fetchAll();
     }
 
@@ -22,7 +27,8 @@ class Category {
         $stmt = $this->db->query(
             'SELECT c.*, COUNT(p.id) AS product_count
              FROM categories c
-             LEFT JOIN products p ON p.category_id = c.id
+             LEFT JOIN products p ON p.category_id = c.id AND p.deleted_at IS NULL
+             WHERE c.deleted_at IS NULL
              GROUP BY c.id
              ORDER BY c.name ASC'
         );
@@ -43,9 +49,21 @@ class Category {
         );
         $stmt->execute([$name, $type, $id]);
     }
+    public function softDelete(int $id): void
+    {
+        $stmt = $this->db->prepare('UPDATE categories SET deleted_at = NOW() WHERE id = ?');
+        $stmt->execute([$id]);
+    }
 
-    public function delete(int $id): void {
+    public function forceDelete(int $id): void
+    {
         $stmt = $this->db->prepare('DELETE FROM categories WHERE id = ?');
+        $stmt->execute([$id]);
+    }
+
+    public function restore(int $id): void
+    {
+        $stmt = $this->db->prepare('UPDATE categories SET deleted_at = NULL WHERE id = ?');
         $stmt->execute([$id]);
     }
 
